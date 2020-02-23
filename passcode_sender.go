@@ -1,7 +1,10 @@
 package passcode
 
-import "time"
+import (
+	"context"
+	"time"
+)
 
 type PasscodeSender interface {
-	Send(to string, passcode string, expires time.Time, params interface{}) error
+	Send(ctx context.Context, to string, passcode string, expires time.Time, params interface{}) error
 }
