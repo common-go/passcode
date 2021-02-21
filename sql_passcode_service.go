@@ -27,7 +27,23 @@ type SQLPasscodeService struct {
 	expiredAtName string
 }
 
-func NewPasscodeService(db *sql.DB, tableName string, idName string, passcodeName string, expiredAtName string) *SQLPasscodeService {
+func NewPasscodeService(db *sql.DB, tableName string, options ...string) *SQLPasscodeService {
+	var idName, passcodeName, expiredAtName string
+	if len(options) >= 1 && len(options[0]) > 0 {
+		expiredAtName = options[0]
+	} else {
+		expiredAtName = "expiredat"
+	}
+	if len(options) >= 2 && len(options[1]) > 0 {
+		idName = options[1]
+	} else {
+		idName = "id"
+	}
+	if len(options) >= 3 && len(options[2]) > 0 {
+		passcodeName = options[2]
+	} else {
+		passcodeName = "passcode"
+	}
 	return &SQLPasscodeService{
 		db:            db,
 		tableName:     strings.ToLower(tableName),
@@ -35,10 +51,6 @@ func NewPasscodeService(db *sql.DB, tableName string, idName string, passcodeNam
 		passcodeName:  strings.ToLower(passcodeName),
 		expiredAtName: strings.ToLower(expiredAtName),
 	}
-}
-
-func NewDefaultPasscodeService(db *sql.DB, tableName string) *SQLPasscodeService {
-	return NewPasscodeService(db, tableName, "id", "passcode", "expiredat")
 }
 
 func (s *SQLPasscodeService) Save(ctx context.Context, id string, passcode string, expireAt time.Time) (int64, error) {
